@@ -3,232 +3,440 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PawManager Screenshot Tool</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#111;color:#fff;min-height:100vh;padding:24px}
-h1{font-size:18px;font-weight:700;margin-bottom:4px}
-.sub{font-size:13px;color:#888;margin-bottom:24px}
-.screens-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:32px}
-.screen-slot{background:#1a1a1a;border:1.5px dashed #333;border-radius:12px;padding:16px;cursor:pointer;transition:border-color .2s;position:relative}
-.screen-slot:hover{border-color:#2E6B35}
-.screen-slot.has-image{border-style:solid;border-color:#2E6B35}
-.slot-num{font-size:10px;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px}
-.slot-caption-input{width:100%;background:#222;border:1px solid #333;border-radius:8px;padding:8px 10px;color:#fff;font-size:12px;font-family:inherit;resize:none;margin-bottom:10px;line-height:1.4}
-.slot-caption-input:focus{outline:none;border-color:#2E6B35}
-.upload-area{aspect-ratio:9/16;background:#222;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;overflow:hidden;position:relative}
-.upload-area img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
-.upload-icon{font-size:24px;position:relative;z-index:1}
-.upload-label{font-size:11px;color:#666;position:relative;z-index:1}
-.upload-area.has-img .upload-icon,.upload-area.has-img .upload-label{display:none}
+body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display',sans-serif;background:#0a0a0a;color:#fff;min-height:100vh;padding:28px 24px 60px}
+
+h1{font-size:22px;font-weight:800;letter-spacing:-0.5px;margin-bottom:2px}
+.sub{font-size:13px;color:#555;margin-bottom:28px}
+.sub span{color:#2E6B35;font-weight:600}
+
+/* Step tabs */
+.steps{display:flex;gap:0;margin-bottom:28px;border-radius:12px;overflow:hidden;border:1px solid #222}
+.step-tab{flex:1;padding:10px 8px;text-align:center;font-size:12px;font-weight:600;color:#555;cursor:pointer;background:#111;border-right:1px solid #222;transition:all .2s;position:relative}
+.step-tab:last-child{border-right:none}
+.step-tab.active{background:#2E6B35;color:#fff}
+.step-tab .snum{display:block;font-size:18px;font-weight:800;color:inherit;line-height:1}
+.step-tab .slabel{display:block;font-size:10px;margin-top:2px;opacity:.8}
+
+.panel{display:none}
+.panel.active{display:block}
+
+/* STEP 1 - Upload */
+.upload-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.uslot{background:#111;border:1.5px dashed #2a2a2a;border-radius:14px;padding:12px;cursor:pointer;transition:all .2s;position:relative}
+.uslot:hover{border-color:#2E6B35;background:#141a14}
+.uslot.filled{border-style:solid;border-color:#2E6B35}
+.uslot-num{font-size:10px;font-weight:700;color:#444;letter-spacing:.5px;margin-bottom:8px;text-transform:uppercase}
+.uslot.filled .uslot-num{color:#2E6B35}
+.phone-frame{aspect-ratio:9/18;border-radius:10px;background:#1a1a1a;overflow:hidden;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;position:relative}
+.phone-frame img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.phone-frame .ph-icon{font-size:20px;position:relative;z-index:1}
+.phone-frame .ph-txt{font-size:9px;color:#444;position:relative;z-index:1;text-align:center;line-height:1.4}
+.uslot.filled .ph-icon,.uslot.filled .ph-txt{display:none}
+.check-badge{position:absolute;top:8px;right:8px;width:20px;height:20px;border-radius:50%;background:#2E6B35;display:none;align-items:center;justify-content:center;font-size:10px;z-index:2}
+.uslot.filled .check-badge{display:flex}
 input[type=file]{display:none}
-.btn-row{display:flex;gap:12px;justify-content:center;margin-top:8px}
-.btn{padding:12px 28px;border-radius:10px;border:none;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:opacity .2s}
-.btn-primary{background:#2E6B35;color:#fff}
-.btn-primary:hover{opacity:.85}
-.btn-secondary{background:#222;color:#aaa;border:1px solid #333}
-.btn-secondary:hover{background:#2a2a2a}
-.progress{display:none;text-align:center;margin-top:16px;font-size:13px;color:#4CAF72}
-.color-row{display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap}
-.color-row label{font-size:13px;color:#aaa}
-.color-row input[type=color]{width:36px;height:36px;border-radius:8px;border:2px solid #333;cursor:pointer;background:none;padding:2px}
-.color-row input[type=text]{background:#222;border:1px solid #333;border-radius:8px;padding:8px 10px;color:#fff;font-size:13px;width:100px;font-family:monospace}
-.color-row input[type=text]:focus{outline:none;border-color:#2E6B35}
-.text-color-row{display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap}
-.bar-height-row{display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap}
-.bar-height-row input[type=range]{flex:1;max-width:180px;accent-color:#2E6B35}
-.bar-height-row span{font-size:13px;color:#aaa;min-width:60px}
-.tip{background:#1a2a1a;border:1px solid #2E6B35;border-radius:8px;padding:12px 14px;font-size:12px;color:#888;margin-bottom:20px;line-height:1.6}
-.tip b{color:#4CAF72}
+
+/* STEP 2 - Style */
+.style-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+.style-card{background:#111;border:1px solid #222;border-radius:14px;padding:16px}
+.style-card h3{font-size:11px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px}
+
+.theme-row{display:flex;gap:8px;flex-wrap:wrap}
+.theme-btn{width:32px;height:32px;border-radius:8px;border:2px solid transparent;cursor:pointer;transition:all .2s;position:relative}
+.theme-btn.active{border-color:#fff;transform:scale(1.1)}
+.theme-btn .th-label{position:absolute;bottom:-16px;left:50%;transform:translateX(-50%);font-size:8px;color:#555;white-space:nowrap}
+
+.style-opt{margin-bottom:12px}
+.style-opt label{font-size:12px;color:#888;display:block;margin-bottom:6px}
+.style-opt input[type=range]{width:100%;accent-color:#2E6B35}
+.style-opt .val{font-size:12px;color:#4CAF72;font-weight:600;float:right}
+
+.layout-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.layout-btn{background:#1a1a1a;border:1.5px solid #2a2a2a;border-radius:10px;padding:10px 6px;cursor:pointer;text-align:center;transition:all .2s}
+.layout-btn:hover{border-color:#2E6B35}
+.layout-btn.active{border-color:#2E6B35;background:#141a14}
+.layout-btn .lb-icon{font-size:16px;margin-bottom:4px}
+.layout-btn .lb-txt{font-size:9px;color:#666}
+.layout-btn.active .lb-txt{color:#4CAF72}
+
+/* STEP 3 - Captions */
+.cap-list{display:flex;flex-direction:column;gap:10px}
+.cap-item{background:#111;border:1px solid #222;border-radius:12px;padding:14px;display:flex;gap:12px;align-items:flex-start}
+.cap-thumb{width:36px;height:64px;border-radius:6px;background:#1a1a1a;overflow:hidden;flex-shrink:0;position:relative}
+.cap-thumb img{width:100%;height:100%;object-fit:cover}
+.cap-thumb .no-img{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:12px}
+.cap-right{flex:1}
+.cap-label{font-size:10px;font-weight:700;color:#444;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.cap-title-inp{width:100%;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:8px;padding:7px 10px;color:#fff;font-size:13px;font-weight:700;font-family:inherit;margin-bottom:4px}
+.cap-title-inp:focus{outline:none;border-color:#2E6B35}
+.cap-sub-inp{width:100%;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:8px;padding:7px 10px;color:#aaa;font-size:12px;font-family:inherit}
+.cap-sub-inp:focus{outline:none;border-color:#2E6B35}
+
+/* STEP 4 - Export */
+.preview-scroll{display:flex;gap:12px;overflow-x:auto;padding-bottom:12px;margin-bottom:20px}
+.preview-item{flex-shrink:0;width:100px}
+.preview-frame{width:100px;border-radius:10px;overflow:hidden;background:#000;box-shadow:0 4px 20px rgba(0,0,0,.6)}
+.preview-frame canvas{width:100%;display:block}
+.preview-lbl{font-size:10px;color:#555;text-align:center;margin-top:6px}
+
+.dl-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.dl-btn-single{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:10px;padding:10px 8px;text-align:center;cursor:pointer;transition:all .2s;font-size:11px;color:#888;font-family:inherit}
+.dl-btn-single:hover{border-color:#2E6B35;color:#4CAF72}
+.dl-btn-single .dnum{font-size:16px;margin-bottom:4px}
+
+.btn-big{width:100%;padding:14px;border-radius:12px;border:none;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-green{background:#2E6B35;color:#fff}
+.btn-green:hover{background:#3a8a44}
+.btn-green:active{transform:scale(.98)}
+
+.nav-row{display:flex;gap:10px;margin-top:20px}
+.nav-btn{flex:1;padding:11px;border-radius:10px;border:1px solid #2a2a2a;background:#111;color:#aaa;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s}
+.nav-btn:hover{border-color:#2E6B35;color:#fff}
+.nav-btn.next{background:#2E6B35;border-color:#2E6B35;color:#fff}
+.nav-btn.next:hover{background:#3a8a44}
+
+.done-msg{display:none;text-align:center;padding:12px;background:#141a14;border:1px solid #2E6B35;border-radius:10px;font-size:13px;color:#4CAF72;margin-top:12px}
+
+canvas{display:none}
 </style>
 </head>
 <body>
 
-<h1>🐾 PawManager Screenshot Tool</h1>
-<p class="sub">Upload your 6 screenshots, customize captions, then download each one ready for App Store Connect.</p>
+<h1>🐾 Screenshot Studio</h1>
+<p class="sub">Make App Store screenshots in minutes — <span>no design skills needed</span></p>
 
-<div class="tip"><b>How to use:</b> Upload a screenshot → edit the caption text → click "Download All" to save each image with the green caption bar at the bottom. Images are saved at your original resolution.</div>
-
-<div class="color-row">
-  <label>Caption bar color</label>
-  <input type="color" id="barColor" value="#2E6B35" oninput="syncHex(this)">
-  <input type="text" id="barHex" value="#2E6B35" oninput="syncColor(this)" maxlength="7">
-  <label style="margin-left:8px">Text color</label>
-  <input type="color" id="textColor" value="#ffffff" oninput="document.getElementById('textHex').value=this.value">
-  <input type="text" id="textHex" value="#ffffff" oninput="document.getElementById('textColor').value=this.value" maxlength="7">
+<div class="steps">
+  <div class="step-tab active" onclick="goStep(0)"><span class="snum">1</span><span class="slabel">Upload</span></div>
+  <div class="step-tab" onclick="goStep(1)"><span class="snum">2</span><span class="slabel">Style</span></div>
+  <div class="step-tab" onclick="goStep(2)"><span class="snum">3</span><span class="slabel">Captions</span></div>
+  <div class="step-tab" onclick="goStep(3)"><span class="snum">4</span><span class="slabel">Export</span></div>
 </div>
 
-<div class="bar-height-row">
-  <label style="font-size:13px;color:#aaa">Bar height</label>
-  <input type="range" id="barHeight" min="60" max="200" value="110" oninput="document.getElementById('barHeightVal').textContent=this.value+'px'">
-  <span id="barHeightVal">110px</span>
-  <label style="font-size:13px;color:#aaa;margin-left:8px">Font size</label>
-  <input type="range" id="fontSize" min="18" max="60" value="32" oninput="document.getElementById('fontSizeVal').textContent=this.value+'px'">
-  <span id="fontSizeVal">32px</span>
+<!-- STEP 1: UPLOAD -->
+<div class="panel active" id="panel0">
+  <div class="upload-grid" id="uploadGrid"></div>
+  <div class="nav-row"><button class="nav-btn next" onclick="goStep(1)">Choose Style →</button></div>
 </div>
 
-<div class="screens-grid" id="grid"></div>
-
-<div class="btn-row">
-  <button class="btn btn-secondary" onclick="resetAll()">Reset All</button>
-  <button class="btn btn-primary" onclick="downloadAll()">⬇ Download All</button>
+<!-- STEP 2: STYLE -->
+<div class="panel" id="panel1">
+  <div class="style-grid">
+    <div class="style-card">
+      <h3>Color Theme</h3>
+      <div class="theme-row" id="themeRow"></div>
+    </div>
+    <div class="style-card">
+      <h3>Caption Layout</h3>
+      <div class="layout-row">
+        <div class="layout-btn active" onclick="setLayout('bottom',this)"><div class="lb-icon">⬇</div><div class="lb-txt">Bottom bar</div></div>
+        <div class="layout-btn" onclick="setLayout('top',this)"><div class="lb-icon">⬆</div><div class="lb-txt">Top bar</div></div>
+        <div class="layout-btn" onclick="setLayout('overlay',this)"><div class="lb-icon">🌄</div><div class="lb-txt">Overlay</div></div>
+      </div>
+    </div>
+    <div class="style-card">
+      <h3>Bar Size</h3>
+      <div class="style-opt"><label>Height <span class="val" id="bhVal">110px</span></label><input type="range" id="barH" min="60" max="220" value="110" oninput="document.getElementById('bhVal').textContent=this.value+'px'"></div>
+      <div class="style-opt"><label>Title size <span class="val" id="fsVal">32px</span></label><input type="range" id="fsz" min="18" max="64" value="32" oninput="document.getElementById('fsVal').textContent=this.value+'px'"></div>
+      <div class="style-opt"><label>Subtitle size <span class="val" id="ssVal">20px</span></label><input type="range" id="ssz" min="12" max="40" value="20" oninput="document.getElementById('ssVal').textContent=this.value+'px'"></div>
+    </div>
+    <div class="style-card">
+      <h3>Custom Colors</h3>
+      <div class="style-opt"><label>Bar color</label><input type="color" id="barColor" value="#2E6B35" style="width:100%;height:36px;border-radius:8px;border:1px solid #333;cursor:pointer;background:none"></div>
+      <div class="style-opt"><label>Title color</label><input type="color" id="titleColor" value="#ffffff" style="width:100%;height:36px;border-radius:8px;border:1px solid #333;cursor:pointer;background:none"></div>
+      <div class="style-opt"><label>Subtitle color</label><input type="color" id="subColor" value="#a8d4ac" style="width:100%;height:36px;border-radius:8px;border:1px solid #333;cursor:pointer;background:none"></div>
+    </div>
+  </div>
+  <div class="nav-row">
+    <button class="nav-btn" onclick="goStep(0)">← Back</button>
+    <button class="nav-btn next" onclick="goStep(2)">Add Captions →</button>
+  </div>
 </div>
-<div class="progress" id="progress">Generating screenshots...</div>
 
-<canvas id="canvas" style="display:none"></canvas>
+<!-- STEP 3: CAPTIONS -->
+<div class="panel" id="panel2">
+  <div class="cap-list" id="capList"></div>
+  <div class="nav-row">
+    <button class="nav-btn" onclick="goStep(1)">← Back</button>
+    <button class="nav-btn next" onclick="goStep(3)">Preview & Export →</button>
+  </div>
+</div>
+
+<!-- STEP 4: EXPORT -->
+<div class="panel" id="panel3">
+  <div class="preview-scroll" id="previewScroll"></div>
+  <div class="dl-grid" id="dlGrid"></div>
+  <button class="btn-big btn-green" onclick="downloadAll()">⬇ Download All Screenshots</button>
+  <div class="done-msg" id="doneMsg">✅ All done! Check your Downloads folder.</div>
+</div>
+
+<canvas id="masterCanvas"></canvas>
 
 <script>
-const captions = [
-  "Your whole day at a glance",
-  "One tap to start — timer runs itself",
-  "All your clients, organized",
-  "Every dog's details, always handy",
-  "Never double-book again",
-  "Always know who's paid up"
+const DEFAULTS = {
+  titles:["Run Your Day, Walk by Walk","Start a Walk in One Tap","All Your Clients in One Place","Know Every Dog by Heart","Your Week, Perfectly Planned","Get Paid. Track Everything."],
+  subs:["Today's schedule at a glance","Live timer starts automatically","Call, track & manage clients","Profiles, tags & vet info","Calendar view with walk times","Outstanding & paid — organized"]
+};
+
+const THEMES = [
+  {name:'PawGreen', bar:'#2E6B35', title:'#ffffff', sub:'#a8d4ac'},
+  {name:'Midnight', bar:'#1a1a2e', title:'#ffffff', sub:'#8888cc'},
+  {name:'Sunset',   bar:'#c0392b', title:'#ffffff', sub:'#f5b7b1'},
+  {name:'Ocean',    bar:'#1a5276', title:'#ffffff', sub:'#85c1e9'},
+  {name:'Sand',     bar:'#f0e6d3', title:'#1a1a1a', sub:'#8B6914'},
+  {name:'Purple',   bar:'#4a235a', title:'#ffffff', sub:'#d7bde2'},
 ];
 
-const slotNames = [
-  "Screenshot 1 — Walks Dashboard",
-  "Screenshot 2 — Active Walk",
-  "Screenshot 3 — Clients List",
-  "Screenshot 4 — Dog Profile",
-  "Screenshot 5 — Schedule",
-  "Screenshot 6 — Payments"
-];
+let imgs = new Array(6).fill(null);
+let layout = 'bottom';
+let currentStep = 0;
 
-const images = new Array(6).fill(null);
-const grid = document.getElementById('grid');
-
-function buildGrid() {
-  grid.innerHTML = '';
-  for (let i = 0; i < 6; i++) {
-    const slot = document.createElement('div');
-    slot.className = 'screen-slot' + (images[i] ? ' has-image' : '');
-    slot.innerHTML = `
-      <div class="slot-num">Screenshot ${i+1}</div>
-      <textarea class="slot-caption-input" id="cap${i}" rows="2">${captions[i]}</textarea>
-      <div class="upload-area ${images[i] ? 'has-img' : ''}" id="area${i}" onclick="triggerUpload(${i})">
-        ${images[i] ? `<img src="${images[i].src}" id="img${i}">` : ''}
-        <div class="upload-icon">📱</div>
-        <div class="upload-label">Tap to upload screenshot</div>
+// Build upload grid
+function buildUpload() {
+  const g = document.getElementById('uploadGrid');
+  g.innerHTML = '';
+  for (let i=0;i<6;i++) {
+    const d = document.createElement('div');
+    d.className = 'uslot'+(imgs[i]?' filled':'');
+    d.onclick = ()=>document.getElementById('fi'+i).click();
+    d.innerHTML = `
+      <div class="uslot-num">Screen ${i+1}</div>
+      <div class="phone-frame" id="pf${i}">
+        ${imgs[i]?`<img src="${imgs[i].src}">`:''}
+        <div class="ph-icon">📱</div>
+        <div class="ph-txt">Tap to upload</div>
       </div>
-      <input type="file" id="file${i}" accept="image/*" onchange="loadImage(event,${i})">
+      <div class="check-badge">✓</div>
+      <input type="file" id="fi${i}" accept="image/*" onchange="loadImg(event,${i})">
     `;
-    grid.appendChild(slot);
+    g.appendChild(d);
   }
 }
 
-function triggerUpload(i) {
-  document.getElementById('file'+i).click();
-}
-
-function loadImage(e, i) {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = ev => {
+function loadImg(e,i) {
+  const f = e.target.files[0]; if(!f) return;
+  const r = new FileReader();
+  r.onload = ev => {
     const img = new Image();
-    img.onload = () => {
-      images[i] = img;
-      buildGrid();
-    };
+    img.onload = ()=>{ imgs[i]=img; buildUpload(); buildCaps(); };
     img.src = ev.target.result;
   };
-  reader.readAsDataURL(file);
+  r.readAsDataURL(f);
 }
 
-function syncHex(el) {
-  document.getElementById('barHex').value = el.value;
-}
-function syncColor(el) {
-  let v = el.value;
-  if (v.length === 7 && v[0] === '#') document.getElementById('barColor').value = v;
+// Build themes
+function buildThemes() {
+  const row = document.getElementById('themeRow');
+  THEMES.forEach((t,i) => {
+    const b = document.createElement('div');
+    b.className='theme-btn'+(i===0?' active':'');
+    b.style.background = t.bar;
+    b.title = t.name;
+    b.onclick = () => {
+      document.querySelectorAll('.theme-btn').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      document.getElementById('barColor').value = t.bar;
+      document.getElementById('titleColor').value = t.title;
+      document.getElementById('subColor').value = t.sub;
+    };
+    row.appendChild(b);
+  });
 }
 
-function resetAll() {
-  images.fill(null);
-  buildGrid();
+function setLayout(l, el) {
+  layout = l;
+  document.querySelectorAll('.layout-btn').forEach(x=>x.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// Build captions
+function buildCaps() {
+  const list = document.getElementById('capList');
+  list.innerHTML = '';
+  for(let i=0;i<6;i++) {
+    const d = document.createElement('div');
+    d.className = 'cap-item';
+    d.innerHTML = `
+      <div class="cap-thumb">${imgs[i]?`<img src="${imgs[i].src}">`:'<div class="no-img">📱</div>'}</div>
+      <div class="cap-right">
+        <div class="cap-label">Screen ${i+1}</div>
+        <input class="cap-title-inp" id="ct${i}" value="${DEFAULTS.titles[i]}" placeholder="Title...">
+        <input class="cap-sub-inp" id="cs${i}" value="${DEFAULTS.subs[i]}" placeholder="Subtitle (optional)...">
+      </div>
+    `;
+    list.appendChild(d);
+  }
+}
+
+// Render to canvas
+function renderOne(i) {
+  const canvas = document.getElementById('masterCanvas');
+  const ctx = canvas.getContext('2d');
+  const img = imgs[i];
+  if (!img) return null;
+
+  const barColor = document.getElementById('barColor').value;
+  const titleColor = document.getElementById('titleColor').value;
+  const subColor = document.getElementById('subColor').value;
+  const barHeightBase = parseInt(document.getElementById('barH').value);
+  const fszBase = parseInt(document.getElementById('fsz').value);
+  const sszBase = parseInt(document.getElementById('ssz').value);
+  const title = document.getElementById('ct'+i)?.value || DEFAULTS.titles[i];
+  const sub = document.getElementById('cs'+i)?.value || DEFAULTS.subs[i];
+
+  const W = img.naturalWidth, H = img.naturalHeight;
+  const scale = W / 390;
+  const barH = Math.round(barHeightBase * scale);
+  const fsz = Math.round(fszBase * scale);
+  const ssz = Math.round(sszBase * scale);
+  const totalH = H + barH;
+
+  canvas.width = W;
+  canvas.height = totalH;
+
+  if (layout === 'bottom') {
+    ctx.drawImage(img, 0, 0, W, H);
+    ctx.fillStyle = barColor;
+    ctx.fillRect(0, H, W, barH);
+    drawText(ctx, title, sub, W, H + barH/2 - (sub?ssz*0.7:0), fsz, ssz, titleColor, subColor, W*0.85);
+  } else if (layout === 'top') {
+    ctx.fillStyle = barColor;
+    ctx.fillRect(0, 0, W, barH);
+    ctx.drawImage(img, 0, barH, W, H);
+    drawText(ctx, title, sub, W, barH/2 - (sub?ssz*0.7:0), fsz, ssz, titleColor, subColor, W*0.85);
+  } else { // overlay
+    ctx.drawImage(img, 0, 0, W, H);
+    const grad = ctx.createLinearGradient(0, H-barH, 0, H);
+    grad.addColorStop(0, 'rgba(0,0,0,0)');
+    grad.addColorStop(1, barColor+'ee');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, H-barH, W, barH);
+    drawText(ctx, title, sub, W, H - barH/2 - (sub?ssz*0.7:0), fsz, ssz, titleColor, subColor, W*0.85);
+  }
+
+  return canvas;
+}
+
+function drawText(ctx, title, sub, W, midY, fsz, ssz, tc, sc, maxW) {
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+
+  // Title
+  ctx.fillStyle = tc;
+  ctx.font = `800 ${fsz}px -apple-system, SF Pro Display, Arial, sans-serif`;
+  const tlines = wrapText(ctx, title, maxW);
+  const lh = fsz * 1.2;
+  const tH = tlines.length * lh;
+  tlines.forEach((l,i) => ctx.fillText(l, W/2, midY - tH/2 + lh*i + lh/2));
+
+  // Subtitle
+  if (sub && sub.trim()) {
+    ctx.fillStyle = sc;
+    ctx.font = `500 ${ssz}px -apple-system, SF Pro Display, Arial, sans-serif`;
+    ctx.fillText(sub, W/2, midY + tH/2 + ssz*1.1);
+  }
+}
+
+function wrapText(ctx, text, maxW) {
+  const words = text.split(' ');
+  const lines = []; let line = '';
+  for (const w of words) {
+    const t = line ? line+' '+w : w;
+    if (ctx.measureText(t).width > maxW && line) { lines.push(line); line=w; }
+    else line = t;
+  }
+  if (line) lines.push(line);
+  return lines;
+}
+
+// Build preview
+function buildPreview() {
+  const scroll = document.getElementById('previewScroll');
+  const dlGrid = document.getElementById('dlGrid');
+  scroll.innerHTML = ''; dlGrid.innerHTML = '';
+
+  for(let i=0;i<6;i++) {
+    // preview
+    const wrap = document.createElement('div');
+    wrap.className = 'preview-item';
+    const pf = document.createElement('div');
+    pf.className = 'preview-frame';
+    const pc = document.createElement('canvas');
+    wrap.appendChild(pf); pf.appendChild(pc);
+    const lbl = document.createElement('div');
+    lbl.className = 'preview-lbl';
+    lbl.textContent = `Screen ${i+1}`;
+    wrap.appendChild(lbl);
+    scroll.appendChild(wrap);
+
+    if (imgs[i]) {
+      const big = renderOne(i);
+      if (big) {
+        const smallC = document.createElement('canvas');
+        const ratio = big.height/big.width;
+        smallC.width = 200; smallC.height = Math.round(200*ratio);
+        const sctx = smallC.getContext('2d');
+        sctx.drawImage(big, 0, 0, smallC.width, smallC.height);
+        pc.width = smallC.width; pc.height = smallC.height;
+        pc.getContext('2d').drawImage(smallC,0,0);
+        pc.style.width='100%';
+      }
+    } else {
+      pc.width=100; pc.height=200;
+      const c=pc.getContext('2d');
+      c.fillStyle='#1a1a1a';c.fillRect(0,0,100,200);
+      c.fillStyle='#333';c.font='12px sans-serif';c.textAlign='center';
+      c.fillText('No image',50,100);
+      pc.style.width='100%';
+    }
+
+    // dl button
+    const db = document.createElement('button');
+    db.className='dl-btn-single';
+    db.innerHTML=`<div class="dnum">${imgs[i]?'⬇':'📱'}</div>Screen ${i+1}`;
+    db.onclick=()=>dlOne(i);
+    dlGrid.appendChild(db);
+  }
+}
+
+function dlOne(i) {
+  if (!imgs[i]) return;
+  const c = renderOne(i);
+  const a = document.createElement('a');
+  a.download = `pawmanager-screen-${i+1}.png`;
+  a.href = c.toDataURL('image/png');
+  a.click();
 }
 
 async function downloadAll() {
-  const canvas = document.getElementById('canvas');
-  const ctx = canvas.getContext('2d');
-  const barColor = document.getElementById('barColor').value;
-  const textColor = document.getElementById('textColor').value;
-  const barHeightPct = parseInt(document.getElementById('barHeight').value);
-  const fontSizePt = parseInt(document.getElementById('fontSize').value);
-
-  let downloaded = 0;
-  const prog = document.getElementById('progress');
-  prog.style.display = 'block';
-
-  for (let i = 0; i < 6; i++) {
-    if (!images[i]) continue;
-    const img = images[i];
-    const caption = document.getElementById('cap'+i).value.trim();
-
-    const w = img.naturalWidth;
-    const h = img.naturalHeight;
-    const barH = Math.round(barHeightPct * (w / 375)); // scale bar to image width
-    const fs = Math.round(fontSizePt * (w / 375));
-
-    canvas.width = w;
-    canvas.height = h + barH;
-
-    ctx.drawImage(img, 0, 0, w, h);
-
-    // caption bar
-    ctx.fillStyle = barColor;
-    ctx.fillRect(0, h, w, barH);
-
-    // text
-    ctx.fillStyle = textColor;
-    ctx.font = `700 ${fs}px -apple-system, SF Pro Display, sans-serif`;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-
-    // word wrap
-    const maxW = w * 0.85;
-    const words = caption.split(' ');
-    let lines = [], line = '';
-    for (const word of words) {
-      const test = line ? line + ' ' + word : word;
-      if (ctx.measureText(test).width > maxW && line) {
-        lines.push(line);
-        line = word;
-      } else {
-        line = test;
-      }
-    }
-    if (line) lines.push(line);
-
-    const lineH = fs * 1.3;
-    const totalTextH = lines.length * lineH;
-    const startY = h + (barH - totalTextH) / 2 + lineH / 2;
-    lines.forEach((l, idx) => {
-      ctx.fillText(l, w / 2, startY + idx * lineH);
-    });
-
-    // download
-    const link = document.createElement('a');
-    link.download = `pawmanager-screenshot-${i+1}.png`;
-    link.href = canvas.toDataURL('image/png');
-    link.click();
-    downloaded++;
-
-    prog.textContent = `Downloaded ${downloaded} of ${images.filter(Boolean).length} screenshots...`;
-    await new Promise(r => setTimeout(r, 400));
+  let count=0;
+  for(let i=0;i<6;i++) {
+    if(!imgs[i]) continue;
+    dlOne(i);
+    count++;
+    await new Promise(r=>setTimeout(r,350));
   }
-
-  if (downloaded === 0) {
-    prog.textContent = '⚠️ No screenshots uploaded yet. Upload at least one image first.';
-  } else {
-    prog.textContent = `✅ Done! ${downloaded} screenshot${downloaded>1?'s':''} saved to your Downloads folder.`;
-  }
-  setTimeout(() => prog.style.display = 'none', 4000);
+  const m=document.getElementById('doneMsg');
+  m.style.display='block';
+  m.textContent = count ? `✅ ${count} screenshot${count>1?'s':''} saved to Downloads!` : '⚠️ Upload at least one screenshot first.';
+  setTimeout(()=>m.style.display='none',4000);
 }
 
-buildGrid();
+function goStep(n) {
+  currentStep = n;
+  document.querySelectorAll('.panel').forEach((p,i)=>{
+    p.classList.toggle('active', i===n);
+  });
+  document.querySelectorAll('.step-tab').forEach((t,i)=>{
+    t.classList.toggle('active', i===n);
+  });
+  if (n===3) buildPreview();
+}
+
+buildUpload();
+buildThemes();
+buildCaps();
 </script>
 </body>
 </html>
