@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PawManager Screenshot Tool</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#111;color:#fff;min-height:100vh;padding:24px}
+h1{font-size:18px;font-weight:700;margin-bottom:4px}
+.sub{font-size:13px;color:#888;margin-bottom:24px}
+.screens-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:32px}
+.screen-slot{background:#1a1a1a;border:1.5px dashed #333;border-radius:12px;padding:16px;cursor:pointer;transition:border-color .2s;position:relative}
+.screen-slot:hover{border-color:#2E6B35}
+.screen-slot.has-image{border-style:solid;border-color:#2E6B35}
+.slot-num{font-size:10px;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px}
+.slot-caption-input{width:100%;background:#222;border:1px solid #333;border-radius:8px;padding:8px 10px;color:#fff;font-size:12px;font-family:inherit;resize:none;margin-bottom:10px;line-height:1.4}
+.slot-caption-input:focus{outline:none;border-color:#2E6B35}
+.upload-area{aspect-ratio:9/16;background:#222;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;overflow:hidden;position:relative}
+.upload-area img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.upload-icon{font-size:24px;position:relative;z-index:1}
+.upload-label{font-size:11px;color:#666;position:relative;z-index:1}
+.upload-area.has-img .upload-icon,.upload-area.has-img .upload-label{display:none}
+input[type=file]{display:none}
+.btn-row{display:flex;gap:12px;justify-content:center;margin-top:8px}
+.btn{padding:12px 28px;border-radius:10px;border:none;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:opacity .2s}
+.btn-primary{background:#2E6B35;color:#fff}
+.btn-primary:hover{opacity:.85}
+.btn-secondary{background:#222;color:#aaa;border:1px solid #333}
+.btn-secondary:hover{background:#2a2a2a}
+.progress{display:none;text-align:center;margin-top:16px;font-size:13px;color:#4CAF72}
+.color-row{display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.color-row label{font-size:13px;color:#aaa}
+.color-row input[type=color]{width:36px;height:36px;border-radius:8px;border:2px solid #333;cursor:pointer;background:none;padding:2px}
+.color-row input[type=text]{background:#222;border:1px solid #333;border-radius:8px;padding:8px 10px;color:#fff;font-size:13px;width:100px;font-family:monospace}
+.color-row input[type=text]:focus{outline:none;border-color:#2E6B35}
+.text-color-row{display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.bar-height-row{display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.bar-height-row input[type=range]{flex:1;max-width:180px;accent-color:#2E6B35}
+.bar-height-row span{font-size:13px;color:#aaa;min-width:60px}
+.tip{background:#1a2a1a;border:1px solid #2E6B35;border-radius:8px;padding:12px 14px;font-size:12px;color:#888;margin-bottom:20px;line-height:1.6}
+.tip b{color:#4CAF72}
+</style>
+</head>
+<body>
+
+<h1>🐾 PawManager Screenshot Tool</h1>
+<p class="sub">Upload your 6 screenshots, customize captions, then download each one ready for App Store Connect.</p>
+
+<div class="tip"><b>How to use:</b> Upload a screenshot → edit the caption text → click "Download All" to save each image with the green caption bar at the bottom. Images are saved at your original resolution.</div>
+
+<div class="color-row">
+  <label>Caption bar color</label>
+  <input type="color" id="barColor" value="#2E6B35" oninput="syncHex(this)">
+  <input type="text" id="barHex" value="#2E6B35" oninput="syncColor(this)" maxlength="7">
+  <label style="margin-left:8px">Text color</label>
+  <input type="color" id="textColor" value="#ffffff" oninput="document.getElementById('textHex').value=this.value">
+  <input type="text" id="textHex" value="#ffffff" oninput="document.getElementById('textColor').value=this.value" maxlength="7">
+</div>
+
+<div class="bar-height-row">
+  <label style="font-size:13px;color:#aaa">Bar height</label>
+  <input type="range" id="barHeight" min="60" max="200" value="110" oninput="document.getElementById('barHeightVal').textContent=this.value+'px'">
+  <span id="barHeightVal">110px</span>
+  <label style="font-size:13px;color:#aaa;margin-left:8px">Font size</label>
+  <input type="range" id="fontSize" min="18" max="60" value="32" oninput="document.getElementById('fontSizeVal').textContent=this.value+'px'">
+  <span id="fontSizeVal">32px</span>
+</div>
+
+<div class="screens-grid" id="grid"></div>
+
+<div class="btn-row">
+  <button class="btn btn-secondary" onclick="resetAll()">Reset All</button>
+  <button class="btn btn-primary" onclick="downloadAll()">⬇ Download All</button>
+</div>
+<div class="progress" id="progress">Generating screenshots...</div>
+
+<canvas id="canvas" style="display:none"></canvas>
+
+<script>
+const captions = [
+  "Your whole day at a glance",
+  "One tap to start — timer runs itself",
+  "All your clients, organized",
+  "Every dog's details, always handy",
+  "Never double-book again",
+  "Always know who's paid up"
+];
+
+const slotNames = [
+  "Screenshot 1 — Walks Dashboard",
+  "Screenshot 2 — Active Walk",
+  "Screenshot 3 — Clients List",
+  "Screenshot 4 — Dog Profile",
+  "Screenshot 5 — Schedule",
+  "Screenshot 6 — Payments"
+];
+
+const images = new Array(6).fill(null);
+const grid = document.getElementById('grid');
+
+function buildGrid() {
+  grid.innerHTML = '';
+  for (let i = 0; i < 6; i++) {
+    const slot = document.createElement('div');
+    slot.className = 'screen-slot' + (images[i] ? ' has-image' : '');
+    slot.innerHTML = `
+      <div class="slot-num">Screenshot ${i+1}</div>
+      <textarea class="slot-caption-input" id="cap${i}" rows="2">${captions[i]}</textarea>
+      <div class="upload-area ${images[i] ? 'has-img' : ''}" id="area${i}" onclick="triggerUpload(${i})">
+        ${images[i] ? `<img src="${images[i].src}" id="img${i}">` : ''}
+        <div class="upload-icon">📱</div>
+        <div class="upload-label">Tap to upload screenshot</div>
+      </div>
+      <input type="file" id="file${i}" accept="image/*" onchange="loadImage(event,${i})">
+    `;
+    grid.appendChild(slot);
+  }
+}
+
+function triggerUpload(i) {
+  document.getElementById('file'+i).click();
+}
+
+function loadImage(e, i) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const img = new Image();
+    img.onload = () => {
+      images[i] = img;
+      buildGrid();
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function syncHex(el) {
+  document.getElementById('barHex').value = el.value;
+}
+function syncColor(el) {
+  let v = el.value;
+  if (v.length === 7 && v[0] === '#') document.getElementById('barColor').value = v;
+}
+
+function resetAll() {
+  images.fill(null);
+  buildGrid();
+}
+
+async function downloadAll() {
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+  const barColor = document.getElementById('barColor').value;
+  const textColor = document.getElementById('textColor').value;
+  const barHeightPct = parseInt(document.getElementById('barHeight').value);
+  const fontSizePt = parseInt(document.getElementById('fontSize').value);
+
+  let downloaded = 0;
+  const prog = document.getElementById('progress');
+  prog.style.display = 'block';
+
+  for (let i = 0; i < 6; i++) {
+    if (!images[i]) continue;
+    const img = images[i];
+    const caption = document.getElementById('cap'+i).value.trim();
+
+    const w = img.naturalWidth;
+    const h = img.naturalHeight;
+    const barH = Math.round(barHeightPct * (w / 375)); // scale bar to image width
+    const fs = Math.round(fontSizePt * (w / 375));
+
+    canvas.width = w;
+    canvas.height = h + barH;
+
+    ctx.drawImage(img, 0, 0, w, h);
+
+    // caption bar
+    ctx.fillStyle = barColor;
+    ctx.fillRect(0, h, w, barH);
+
+    // text
+    ctx.fillStyle = textColor;
+    ctx.font = `700 ${fs}px -apple-system, SF Pro Display, sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    // word wrap
+    const maxW = w * 0.85;
+    const words = caption.split(' ');
+    let lines = [], line = '';
+    for (const word of words) {
+      const test = line ? line + ' ' + word : word;
+      if (ctx.measureText(test).width > maxW && line) {
+        lines.push(line);
+        line = word;
+      } else {
+        line = test;
+      }
+    }
+    if (line) lines.push(line);
+
+    const lineH = fs * 1.3;
+    const totalTextH = lines.length * lineH;
+    const startY = h + (barH - totalTextH) / 2 + lineH / 2;
+    lines.forEach((l, idx) => {
+      ctx.fillText(l, w / 2, startY + idx * lineH);
+    });
+
+    // download
+    const link = document.createElement('a');
+    link.download = `pawmanager-screenshot-${i+1}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    downloaded++;
+
+    prog.textContent = `Downloaded ${downloaded} of ${images.filter(Boolean).length} screenshots...`;
+    await new Promise(r => setTimeout(r, 400));
+  }
+
+  if (downloaded === 0) {
+    prog.textContent = '⚠️ No screenshots uploaded yet. Upload at least one image first.';
+  } else {
+    prog.textContent = `✅ Done! ${downloaded} screenshot${downloaded>1?'s':''} saved to your Downloads folder.`;
+  }
+  setTimeout(() => prog.style.display = 'none', 4000);
+}
+
+buildGrid();
+</script>
+</body>
+</html>
