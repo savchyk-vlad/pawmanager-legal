@@ -8,129 +8,356 @@
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
-    --accent: #3D7C47; --accent-lt: #E8F3EA;
-    --text: #1A1510; --text-2: #5A5147; --text-3: #9A8F82;
-    --bg: #F5F2EE; --surface: #FFFFFF; --border: rgba(60,50,35,0.10);
+    --accent: #2E7D3E; --accent-lt: #E8F5EE; --accent-mid: #C8E6D0;
+    --text: #1A1A1A; --text-2: #444444; --text-3: #888888;
+    --bg: #F2F2F2; --surface: #FFFFFF; --border: rgba(0,0,0,0.08);
+    --amber: #C97000; --amber-lt: #FFF8EE;
   }
   body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
 
-  header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+  /* ── HEADER ── */
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 24px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+  }
   .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-  .logo-icon { width: 32px; height: 32px; border-radius: 8px; overflow: hidden; flex-shrink: 0; }
-  .logo-icon img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .logo span { font-size: 18px; font-weight: 600; color: var(--text); }
-  nav a { font-size: 13px; font-weight: 500; padding: 7px 14px; border-radius: 99px; text-decoration: none; color: var(--text-2); background: var(--bg); transition: background 0.15s; }
-  nav a:hover { background: var(--accent-lt); color: var(--accent); }
+  .logo-paw {
+    width: 34px; height: 34px;
+    border-radius: 8px;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .logo-paw img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .logo span { font-size: 17px; font-weight: 600; color: var(--text); }
+  .nav-link {
+    font-size: 13px; font-weight: 500;
+    padding: 7px 14px; border-radius: 99px;
+    text-decoration: none; color: var(--text-2);
+    background: var(--bg);
+    transition: background 0.15s;
+    border: 1px solid var(--border);
+  }
+  .nav-link:hover { background: var(--accent-lt); color: var(--accent); }
 
+  /* ── PAGE ── */
   .page { max-width: 720px; margin: 0 auto; padding: 56px 24px 100px; }
-  h1 { font-size: 32px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 6px; }
-  .meta { font-size: 13px; color: var(--text-3); margin-bottom: 40px; padding-bottom: 24px; border-bottom: 1px solid var(--border); }
-  h2 { font-size: 18px; font-weight: 600; margin: 36px 0 10px; }
-  h3 { font-size: 15px; font-weight: 600; margin: 22px 0 6px; }
-  p { font-size: 15px; color: var(--text-2); margin-bottom: 14px; }
-  ul { padding-left: 20px; margin-bottom: 14px; }
-  ul li { font-size: 15px; color: var(--text-2); margin-bottom: 6px; }
-  a { color: var(--accent); }
-  .callout { background: var(--accent-lt); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; font-size: 14px; color: #2A5730; line-height: 1.6; }
 
-  footer { text-align: center; padding: 32px 24px; border-top: 1px solid var(--border); font-size: 13px; color: var(--text-3); }
+  .page-header { margin-bottom: 40px; padding-bottom: 28px; border-bottom: 1px solid var(--border); }
+  h1 { font-size: 34px; font-weight: 700; letter-spacing: -0.6px; margin-bottom: 8px; }
+  .meta { font-size: 13px; color: var(--text-3); display: flex; flex-wrap: wrap; gap: 6px 16px; margin-bottom: 20px; }
+  .meta span { display: flex; align-items: center; gap: 5px; }
+
+  /* TOC */
+  .toc {
+    background: var(--accent-lt);
+    border: 1px solid var(--accent-mid);
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin-top: 20px;
+  }
+  .toc-title { font-size: 12px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+  .toc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 4px 16px; }
+  .toc a { font-size: 13px; color: var(--accent); text-decoration: none; font-weight: 500; }
+  .toc a:hover { text-decoration: underline; }
+
+  /* Callout */
+  .callout {
+    background: var(--accent-lt);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 10px 10px 0;
+    padding: 14px 18px;
+    margin: 24px 0;
+    font-size: 14px; color: #1e5c2a; line-height: 1.6;
+  }
+  .callout.amber {
+    background: var(--amber-lt);
+    border-color: var(--amber);
+    color: #7a4500;
+  }
+
+  /* Sections */
+  .section { margin-bottom: 8px; }
+  h2 {
+    font-size: 19px; font-weight: 700;
+    margin: 44px 0 12px;
+    padding-top: 8px;
+    color: var(--text);
+    display: flex; align-items: center; gap: 10px;
+  }
+  h2 .section-num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 26px; height: 26px;
+    background: var(--accent);
+    color: #fff;
+    border-radius: 6px;
+    font-size: 12px; font-weight: 700;
+    flex-shrink: 0;
+  }
+  h3 { font-size: 15px; font-weight: 600; margin: 20px 0 6px; color: var(--text); }
+  p { font-size: 15px; color: var(--text-2); margin-bottom: 14px; line-height: 1.7; }
+  ul { padding-left: 20px; margin-bottom: 14px; }
+  ul li { font-size: 15px; color: var(--text-2); margin-bottom: 7px; line-height: 1.6; }
+  a { color: var(--accent); }
+
+  /* Feature table */
+  .plan-table { width: 100%; border-collapse: collapse; margin: 16px 0 20px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); }
+  .plan-table th { background: var(--bg); font-size: 12px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; color: var(--text-3); padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border); }
+  .plan-table td { font-size: 14px; color: var(--text-2); padding: 11px 14px; border-bottom: 1px solid var(--border); background: var(--surface); }
+  .plan-table tr:last-child td { border-bottom: none; }
+  .plan-table td:first-child { font-weight: 500; color: var(--text); }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; }
+  .badge.free { background: var(--bg); color: var(--text-3); border: 1px solid var(--border); }
+  .badge.pro { background: var(--accent-lt); color: var(--accent); border: 1px solid var(--accent-mid); }
+
+  /* Divider */
+  .divider { border: none; border-top: 1px solid var(--border); margin: 8px 0; }
+
+  /* Footer */
+  footer {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    text-align: center;
+    padding: 28px 24px;
+    font-size: 13px; color: var(--text-3);
+  }
   footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+  .footer-links { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px 20px; margin-top: 8px; }
 </style>
 </head>
 <body>
 
 <header>
   <a class="logo" href="#">
-    <div class="logo-icon"><img src="icon.png" alt="PawManager"></div>
+    <div class="logo-paw"><img src="icon.png" alt="PawManager"></div>
     <span>PawManager</span>
   </a>
-  <nav>
-    <a href="privacy.html">← Privacy Policy</a>
-  </nav>
+  <a class="nav-link" href="privacy.html">← Privacy Policy</a>
 </header>
 
 <div class="page">
-  <h1>Terms of Use</h1>
-  <p class="meta">Effective date: May 1, 2026 &nbsp;·&nbsp; Last updated: May 1, 2026 &nbsp;·&nbsp; Contact: <a href="mailto:savchik.vl@gmail.com">savchik.vl@gmail.com</a></p>
 
-  <div class="callout">Please read these Terms carefully before using PawManager. By creating an account or using the app, you agree to be bound by these Terms.</div>
+  <div class="page-header">
+    <h1>Terms of Use</h1>
+    <div class="meta">
+      <span>📅 Effective: May 1, 2026</span>
+      <span>🔄 Last updated: May 1, 2026</span>
+      <span>✉️ <a href="mailto:savchik.vl@gmail.com">savchik.vl@gmail.com</a></span>
+    </div>
 
-  <h2>1. Acceptance of Terms</h2>
+    <div class="callout">
+      Please read these Terms carefully before using PawManager. By creating an account or using the app, you agree to be bound by these Terms. If you do not agree, do not use the App.
+    </div>
+
+    <div class="toc">
+      <div class="toc-title">Contents</div>
+      <div class="toc-grid">
+        <a href="#s1">1. Acceptance of Terms</a>
+        <a href="#s2">2. Eligibility</a>
+        <a href="#s3">3. Description of Service</a>
+        <a href="#s4">4. Account Registration</a>
+        <a href="#s5">5. Free Plan & Pro Subscription</a>
+        <a href="#s6">6. In-App Purchases & Billing</a>
+        <a href="#s7">7. Acceptable Use</a>
+        <a href="#s8">8. Your Data</a>
+        <a href="#s9">9. Push Notifications</a>
+        <a href="#s10">10. Intellectual Property</a>
+        <a href="#s11">11. Disclaimer of Warranties</a>
+        <a href="#s12">12. Limitation of Liability</a>
+        <a href="#s13">13. Indemnification</a>
+        <a href="#s14">14. Third-Party Services</a>
+        <a href="#s15">15. Termination</a>
+        <a href="#s16">16. Governing Law</a>
+        <a href="#s17">17. Changes to These Terms</a>
+        <a href="#s18">18. Contact</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1 -->
+  <h2 id="s1"><span class="section-num">1</span> Acceptance of Terms</h2>
   <p>These Terms of Use ("Terms") constitute a legally binding agreement between you ("you" or "User") and PawManager ("we," "us," or "our") governing your access to and use of the PawManager mobile application ("App"). By downloading, installing, or using the App, you confirm that you have read, understood, and agree to these Terms.</p>
-  <p>If you do not agree to these Terms, do not use the App.</p>
 
-  <h2>2. Eligibility</h2>
-  <p>You must be at least 18 years old to use PawManager. By using the App, you represent and warrant that you are 18 or older and have the legal capacity to enter into these Terms.</p>
+  <!-- 2 -->
+  <h2 id="s2"><span class="section-num">2</span> Eligibility</h2>
+  <p>You must be at least 18 years old to use PawManager. By using the App, you represent and warrant that you are 18 or older and have the legal capacity to enter into these Terms. The App is intended for use by professional dog walkers and independent pet care businesses operating in the United States.</p>
 
-  <h2>3. Description of Service</h2>
-  <p>PawManager is a business management tool that helps independent dog walkers and small pet care businesses organize client information, schedule walks, and track payments. The App is not a pet care marketplace and does not connect pet owners with walkers. We do not facilitate, process, or guarantee any pet care services or financial transactions between you and your clients.</p>
-
-  <h2>4. Account Registration</h2>
-  <p>You must create an account to use PawManager. You agree to:</p>
+  <!-- 3 -->
+  <h2 id="s3"><span class="section-num">3</span> Description of Service</h2>
+  <p>PawManager is a business management tool for independent dog walkers and small pet care teams (1–10 staff members). The App provides the following core features:</p>
   <ul>
-    <li>Provide accurate, current, and complete information during registration.</li>
-    <li>Keep your password secure and confidential.</li>
+    <li><strong>Client & dog profiles</strong> — store owner contact info, dog details, temperament tags, medical notes, vet info, and access instructions.</li>
+    <li><strong>Schedule & calendar</strong> — create single or recurring walks, view by day or week, track walk status (Scheduled, In Progress, Completed, Cancelled).</li>
+    <li><strong>Walk logging</strong> — start and finish walks with a live timer, log actual duration and post-walk notes.</li>
+    <li><strong>Payment tracking</strong> — track unpaid balances per client, mark payments as received, log payment method (Cash, Venmo, Zelle, Check).</li>
+    <li><strong>Push notifications</strong> — local reminders for upcoming walks, overdue walks, unpaid balances, and daily/monthly summaries.</li>
+    <li><strong>Monthly reports & PDF export</strong> — Pro feature. See earnings summaries, top clients, and export tax-ready PDFs.</li>
+    <li><strong>Recurring walk templates</strong> — Pro feature. Set weekly schedules that auto-populate the calendar.</li>
+  </ul>
+  <div class="callout">
+    PawManager is not a pet care marketplace. We do not connect pet owners with walkers, process payments on your behalf, or assume any liability for pet care services performed by users of this App.
+  </div>
+
+  <!-- 4 -->
+  <h2 id="s4"><span class="section-num">4</span> Account Registration</h2>
+  <p>You must create an account to use PawManager via email and password, or Sign in with Apple. You agree to:</p>
+  <ul>
+    <li>Provide accurate, current, and complete information during registration, including your name and optionally your business name (used in PDF export headers).</li>
+    <li>Keep your credentials secure and confidential.</li>
     <li>Notify us immediately at <a href="mailto:savchik.vl@gmail.com">savchik.vl@gmail.com</a> if you suspect unauthorized access to your account.</li>
     <li>Accept responsibility for all activity that occurs under your account.</li>
   </ul>
   <p>We reserve the right to suspend or terminate accounts that violate these Terms.</p>
 
-  <h2>5. Free App</h2>
-  <p>PawManager is currently free to download and use with full access to all features including client management, scheduling, and payment tracking. We reserve the right to introduce paid features or subscription plans in the future, at which point these Terms will be updated accordingly.</p>
+  <!-- 5 -->
+  <h2 id="s5"><span class="section-num">5</span> Free Plan & Pro Subscription</h2>
+  <p>PawManager offers two tiers of access:</p>
 
-  <h2>6. Acceptable Use</h2>
-  <p>You agree to use PawManager only for lawful purposes and in accordance with these Terms. You agree not to:</p>
+  <table class="plan-table">
+    <thead>
+      <tr><th>Feature</th><th>Free</th><th>Pro</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Active clients</td><td>Up to 3</td><td>Unlimited</td></tr>
+      <tr><td>Walk tracking & logging</td><td>✓ Included</td><td>✓ Included</td></tr>
+      <tr><td>Payment tracking</td><td>✓ Included</td><td>✓ Included</td></tr>
+      <tr><td>Push notifications</td><td>✓ Included</td><td>✓ Included</td></tr>
+      <tr><td>Recurring walk templates</td><td>—</td><td>✓ Pro only</td></tr>
+      <tr><td>Monthly reports</td><td>—</td><td>✓ Pro only</td></tr>
+      <tr><td>PDF export</td><td>—</td><td>✓ Pro only</td></tr>
+      <tr><td>Unpaid balance reminders</td><td>—</td><td>✓ Pro only</td></tr>
+    </tbody>
+  </table>
+
+  <p>The Free plan remains available indefinitely. Pro features are gated and accessible only with an active Pro subscription. Attempting to add a 4th client or create a recurring walk on the Free plan will prompt an upgrade offer.</p>
+
+  <!-- 6 -->
+  <h2 id="s6"><span class="section-num">6</span> In-App Purchases & Billing</h2>
+
+  <h3>Pricing</h3>
   <ul>
-    <li>Use the App to store or transmit unlawful, harmful, or fraudulent content.</li>
-    <li>Attempt to reverse-engineer, decompile, or disassemble any part of the App.</li>
-    <li>Use the App to infringe the intellectual property rights of others.</li>
-    <li>Attempt to gain unauthorized access to any systems or networks connected to the App.</li>
-    <li>Use the App in any way that could damage, disable, or impair its functionality.</li>
-    <li>Misrepresent your identity or affiliation with any person or entity.</li>
+    <li><strong>Pro Monthly</strong> — $12.00 per month, billed monthly.</li>
+    <li><strong>Pro Annual</strong> — $99.00 per year (equivalent to $8.25/month), billed annually. This is the recommended plan and saves 31% compared to monthly billing.</li>
   </ul>
 
-  <h2>7. Your Data</h2>
-  <p>You retain ownership of all data you enter into PawManager, including client information, dog profiles, walk records, and payment data. By entering data into the App, you grant us a limited license to process and store that data solely to deliver the App's features to you.</p>
-  <p>You are solely responsible for the accuracy of the data you enter and for ensuring you have appropriate authorization to store information about third parties (such as your clients) in a third-party application.</p>
+  <h3>Billing & Auto-Renewal</h3>
+  <p>All subscriptions are processed through Apple In-App Purchase and managed by RevenueCat. Payment is charged to your Apple ID account at confirmation of purchase. Subscriptions automatically renew at the end of each billing period unless cancelled at least 24 hours before the renewal date.</p>
 
-  <h2>8. Intellectual Property</h2>
-  <p>PawManager and all its content, features, and functionality — including but not limited to the app design, logos, text, graphics, and code — are owned by us and protected by applicable intellectual property laws. You may not copy, modify, distribute, or create derivative works based on any part of the App without our prior written consent.</p>
+  <h3>Cancellation</h3>
+  <p>You may cancel your subscription at any time through iOS Settings → Apple ID → Subscriptions. Cancellation takes effect at the end of the current billing period. You retain access to Pro features until that date. PawManager does not issue refunds for partial periods, in accordance with Apple's standard in-app purchase policy.</p>
 
-  <h2>9. Disclaimer of Warranties</h2>
+  <h3>Free Plan After Cancellation</h3>
+  <p>After cancellation, your account reverts to the Free plan. If you have more than 3 active clients, existing client data is preserved but you will not be able to add new clients until you are within the 3-client limit or resubscribe to Pro.</p>
+
+  <div class="callout amber">
+    PawManager does not store your payment information. All billing is handled exclusively by Apple and RevenueCat. We never charge commission on payments you receive from your clients.
+  </div>
+
+  <!-- 7 -->
+  <h2 id="s7"><span class="section-num">7</span> Acceptable Use</h2>
+  <p>You agree to use PawManager only for lawful business management purposes. You agree not to:</p>
+  <ul>
+    <li>Use the App to store or transmit unlawful, harmful, or fraudulent content.</li>
+    <li>Enter false or misleading client, dog, or payment information.</li>
+    <li>Attempt to reverse-engineer, decompile, or disassemble any part of the App.</li>
+    <li>Use the App in any way that could damage, disable, or impair its functionality or Supabase infrastructure.</li>
+    <li>Attempt to gain unauthorized access to other users' data — all data is isolated per account via Row Level Security.</li>
+    <li>Use the App to infringe the intellectual property rights of others.</li>
+    <li>Misrepresent your identity or business.</li>
+  </ul>
+
+  <!-- 8 -->
+  <h2 id="s8"><span class="section-num">8</span> Your Data</h2>
+  <p>You retain ownership of all data you enter into PawManager, including client contact information, dog profiles, walk records, and payment history. By entering data into the App, you grant us a limited, non-exclusive license to process and store that data solely to deliver the App's features to you.</p>
+  <p>All data is stored in Supabase (AWS us-east-1 region) with Row Level Security enforced — no other user can access your data. Dog photos are stored in private Supabase Storage buckets.</p>
+  <p>You are solely responsible for:</p>
+  <ul>
+    <li>The accuracy of data you enter.</li>
+    <li>Ensuring you have appropriate authorization to store third-party personal information (such as client names, phone numbers, and addresses) in a cloud-based application.</li>
+    <li>Complying with any applicable data protection laws in your jurisdiction when collecting and storing client information.</li>
+  </ul>
+  <p>We do not sell your data, share it with advertisers, or use it for any purpose other than operating the App. See our <a href="privacy.html">Privacy Policy</a> for full details.</p>
+
+  <!-- 9 -->
+  <h2 id="s9"><span class="section-num">9</span> Push Notifications</h2>
+  <p>PawManager uses locally scheduled push notifications via Expo Notifications. No server-side system sends notifications — all reminders are scheduled on your device when a walk is created and cancelled when a walk is deleted or rescheduled. Notification types include:</p>
+  <ul>
+    <li>Walk reminders (configurable: 15, 30, or 60 minutes before a walk).</li>
+    <li>Overdue walk alerts (15 minutes past scheduled start time).</li>
+    <li>Unpaid balance reminders after 7 days — Pro feature.</li>
+    <li>Daily summary at 8pm (optional, can be disabled in Settings).</li>
+    <li>Monthly recap on the 1st of each month.</li>
+  </ul>
+  <p>You may disable notifications at any time in your device's iOS notification settings or within the App's Settings screen.</p>
+
+  <!-- 10 -->
+  <h2 id="s10"><span class="section-num">10</span> Intellectual Property</h2>
+  <p>PawManager and all its content, features, and functionality — including the app design, logos, text, graphics, navigation structure, and code — are owned by us and protected by applicable intellectual property laws. You may not copy, modify, distribute, or create derivative works based on any part of the App without our prior written consent.</p>
+
+  <!-- 11 -->
+  <h2 id="s11"><span class="section-num">11</span> Disclaimer of Warranties</h2>
   <p>PawManager is provided on an "AS IS" and "AS AVAILABLE" basis without warranties of any kind, either express or implied. We do not warrant that:</p>
   <ul>
-    <li>The App will be uninterrupted, error-free, or free of virus or other harmful components.</li>
+    <li>The App will be uninterrupted, error-free, or free from harmful components.</li>
+    <li>Walk reminders or push notifications will fire at the exact scheduled time in all iOS configurations.</li>
+    <li>Recurring walk instances will generate without any delay in all network conditions.</li>
+    <li>PDF exports will meet the formal requirements of any specific tax authority.</li>
     <li>The App will meet your specific business requirements.</li>
-    <li>Any errors in the App will be corrected.</li>
   </ul>
   <p>Your use of the App is at your sole risk.</p>
 
-  <h2>10. Limitation of Liability</h2>
-  <p>To the maximum extent permitted by applicable law, we shall not be liable for any indirect, incidental, special, consequential, or punitive damages — including loss of profits, data, or business opportunities — arising from your use of or inability to use the App, even if we have been advised of the possibility of such damages.</p>
-  <p>Our total liability to you for any claim arising from these Terms or your use of the App shall not exceed the amount you paid us in the 12 months preceding the claim (or $12 if you are on the free plan).</p>
+  <!-- 12 -->
+  <h2 id="s12"><span class="section-num">12</span> Limitation of Liability</h2>
+  <p>To the maximum extent permitted by applicable law, we shall not be liable for any indirect, incidental, special, consequential, or punitive damages — including loss of client data, missed walks, billing errors with your clients, or loss of business — arising from your use of or inability to use the App.</p>
+  <p>Our total liability to you for any claim shall not exceed the amount you paid us in the 12 months preceding the claim (or $0 if you are on the Free plan).</p>
 
-  <h2>11. Indemnification</h2>
-  <p>You agree to indemnify and hold us harmless from any claims, damages, losses, liabilities, costs, and expenses (including reasonable attorneys' fees) arising from your use of the App, your violation of these Terms, or your violation of any rights of a third party.</p>
+  <!-- 13 -->
+  <h2 id="s13"><span class="section-num">13</span> Indemnification</h2>
+  <p>You agree to indemnify and hold us harmless from any claims, damages, losses, liabilities, costs, and expenses (including reasonable attorneys' fees) arising from your use of the App, your violation of these Terms, your storage of third-party personal data without authorization, or your violation of any rights of a third party.</p>
 
-  <h2>12. Third-Party Services</h2>
-  <p>The App integrates with third-party services including Supabase, Apple, and Expo. Your use of those services is governed by their respective terms and privacy policies. We are not responsible for the practices of any third-party service providers.</p>
+  <!-- 14 -->
+  <h2 id="s14"><span class="section-num">14</span> Third-Party Services</h2>
+  <p>The App integrates with the following third-party services. Your use of those services is subject to their respective terms and privacy policies:</p>
+  <ul>
+    <li><strong>Supabase</strong> — database, authentication, and file storage (AWS us-east-1).</li>
+    <li><strong>Apple</strong> — Sign in with Apple authentication; In-App Purchase billing.</li>
+    <li><strong>RevenueCat</strong> — subscription management and entitlement verification.</li>
+    <li><strong>Expo / Expo Notifications</strong> — mobile runtime and local push notification scheduling.</li>
+  </ul>
+  <p>We are not responsible for the practices, availability, or content of any third-party service providers.</p>
 
-  <h2>13. Termination</h2>
-  <p>You may stop using the App and delete your account at any time by contacting us at <a href="mailto:savchik.vl@gmail.com">savchik.vl@gmail.com</a>. We may suspend or terminate your access to the App at any time if we believe you have violated these Terms, without prior notice or liability.</p>
-  <p>Upon termination, your right to use the App ceases immediately. Sections 8, 9, 10, and 11 survive termination.</p>
+  <!-- 15 -->
+  <h2 id="s15"><span class="section-num">15</span> Termination</h2>
+  <p>You may stop using the App and request account deletion at any time by contacting us at <a href="mailto:savchik.vl@gmail.com">savchik.vl@gmail.com</a>. Upon account deletion, all your data — including client profiles, dog records, walk history, and payment records — will be permanently removed from Supabase within 30 days.</p>
+  <p>We may suspend or terminate your access to the App at any time if we believe you have violated these Terms, without prior notice or liability. Sections 10, 11, 12, and 13 survive termination.</p>
 
-  <h2>14. Governing Law</h2>
-  <p>These Terms are governed by and construed in accordance with the laws of the United States. Any disputes arising from these Terms or your use of the App shall be resolved through good-faith negotiation. If resolution cannot be reached, disputes shall be subject to binding arbitration in accordance with the American Arbitration Association's rules.</p>
+  <!-- 16 -->
+  <h2 id="s16"><span class="section-num">16</span> Governing Law</h2>
+  <p>These Terms are governed by and construed in accordance with the laws of the United States. Any disputes arising from these Terms or your use of the App shall be resolved first through good-faith negotiation. If resolution cannot be reached within 30 days, disputes shall be subject to binding arbitration under the American Arbitration Association's Consumer Arbitration Rules.</p>
 
-  <h2>15. Changes to These Terms</h2>
-  <p>We reserve the right to update these Terms at any time. We will notify you of material changes via a push notification or in-app message, and the updated Terms will be posted on this page with a new effective date. Continued use of the App after changes take effect constitutes acceptance of the new Terms.</p>
+  <!-- 17 -->
+  <h2 id="s17"><span class="section-num">17</span> Changes to These Terms</h2>
+  <p>We reserve the right to update these Terms at any time. We will notify you of material changes — such as changes to pricing, data handling, or Pro feature availability — via a push notification or in-app message. The updated Terms will be posted on this page with a new effective date. Continued use of the App after changes take effect constitutes your acceptance of the revised Terms.</p>
 
-  <h2>16. Contact</h2>
-  <p>If you have any questions about these Terms, please contact us at: <a href="mailto:savchik.vl@gmail.com">savchik.vl@gmail.com</a></p>
+  <!-- 18 -->
+  <h2 id="s18"><span class="section-num">18</span> Contact</h2>
+  <p>If you have questions about these Terms, a billing issue, or a data deletion request, please contact us:</p>
+  <p><strong>Email:</strong> <a href="mailto:savchik.vl@gmail.com">savchik.vl@gmail.com</a><br>
+  <strong>Response time:</strong> We aim to respond within 2 business days.</p>
+
 </div>
 
 <footer>
-  © 2026 PawManager. All rights reserved. &nbsp;·&nbsp; <a href="privacy.html">Privacy Policy</a> &nbsp;·&nbsp; <a href="terms.html">Terms of Use</a> &nbsp;·&nbsp; <a href="mailto:savchik.vl@gmail.com">savchik.vl@gmail.com</a>
+  © 2026 PawManager. All rights reserved.
+  <div class="footer-links">
+    <a href="privacy.html">Privacy Policy</a>
+    <a href="terms.html">Terms of Use</a>
+    <a href="mailto:savchik.vl@gmail.com">savchik.vl@gmail.com</a>
+  </div>
 </footer>
+
 </body>
 </html>
