@@ -8,33 +8,114 @@
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
-    --accent: #3D7C47; --accent-lt: #E8F3EA;
-    --text: #1A1510; --text-2: #5A5147; --text-3: #9A8F82;
-    --bg: #F5F2EE; --surface: #FFFFFF; --border: rgba(60,50,35,0.10);
+    --accent: #2E7D3E; --accent-lt: #E8F5EE; --accent-mid: #C8E6D0;
+    --text: #1A1A1A; --text-2: #444444; --text-3: #888888;
+    --bg: #F2F2F2; --surface: #FFFFFF; --border: rgba(0,0,0,0.08);
+    --amber: #C97000; --amber-lt: #FFF8EE;
   }
   body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
 
-  header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+  /* ── HEADER ── */
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 24px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+  }
   .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-  .logo-icon { width: 32px; height: 32px; border-radius: 8px; overflow: hidden; flex-shrink: 0; }
+  .logo-icon { width: 34px; height: 34px; border-radius: 8px; overflow: hidden; flex-shrink: 0; }
   .logo-icon img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .logo span { font-size: 18px; font-weight: 600; color: var(--text); }
-  nav a { font-size: 13px; font-weight: 500; padding: 7px 14px; border-radius: 99px; text-decoration: none; color: var(--text-2); background: var(--bg); transition: background 0.15s; }
-  nav a:hover { background: var(--accent-lt); color: var(--accent); }
+  .logo span { font-size: 17px; font-weight: 600; color: var(--text); }
+  .nav-link {
+    font-size: 13px; font-weight: 500;
+    padding: 7px 14px; border-radius: 99px;
+    text-decoration: none; color: var(--text-2);
+    background: var(--bg);
+    transition: background 0.15s;
+    border: 1px solid var(--border);
+  }
+  .nav-link:hover { background: var(--accent-lt); color: var(--accent); }
 
+  /* ── PAGE ── */
   .page { max-width: 720px; margin: 0 auto; padding: 56px 24px 100px; }
-  h1 { font-size: 32px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 6px; }
-  .meta { font-size: 13px; color: var(--text-3); margin-bottom: 40px; padding-bottom: 24px; border-bottom: 1px solid var(--border); }
-  h2 { font-size: 18px; font-weight: 600; margin: 36px 0 10px; }
-  h3 { font-size: 15px; font-weight: 600; margin: 22px 0 6px; }
-  p { font-size: 15px; color: var(--text-2); margin-bottom: 14px; }
-  ul { padding-left: 20px; margin-bottom: 14px; }
-  ul li { font-size: 15px; color: var(--text-2); margin-bottom: 6px; }
-  a { color: var(--accent); }
-  .callout { background: var(--accent-lt); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; font-size: 14px; color: #2A5730; line-height: 1.6; }
 
-  footer { text-align: center; padding: 32px 24px; border-top: 1px solid var(--border); font-size: 13px; color: var(--text-3); }
+  .page-header { margin-bottom: 40px; padding-bottom: 28px; border-bottom: 1px solid var(--border); }
+  h1 { font-size: 34px; font-weight: 700; letter-spacing: -0.6px; margin-bottom: 8px; }
+  .meta { font-size: 13px; color: var(--text-3); display: flex; flex-wrap: wrap; gap: 6px 16px; margin-bottom: 20px; }
+
+  /* TOC */
+  .toc {
+    background: var(--accent-lt);
+    border: 1px solid var(--accent-mid);
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin-top: 20px;
+  }
+  .toc-title { font-size: 12px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+  .toc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 4px 16px; }
+  .toc a { font-size: 13px; color: var(--accent); text-decoration: none; font-weight: 500; }
+  .toc a:hover { text-decoration: underline; }
+
+  /* Callouts */
+  .callout {
+    background: var(--accent-lt);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 10px 10px 0;
+    padding: 14px 18px;
+    margin: 24px 0;
+    font-size: 14px; color: #1e5c2a; line-height: 1.6;
+  }
+  .callout.amber {
+    background: var(--amber-lt);
+    border-color: var(--amber);
+    color: #7a4500;
+  }
+
+  /* Sections */
+  h2 {
+    font-size: 19px; font-weight: 700;
+    margin: 44px 0 12px;
+    padding-top: 8px;
+    color: var(--text);
+    display: flex; align-items: center; gap: 10px;
+  }
+  h2 .section-num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 26px; height: 26px;
+    background: var(--accent);
+    color: #fff;
+    border-radius: 6px;
+    font-size: 12px; font-weight: 700;
+    flex-shrink: 0;
+  }
+  h3 { font-size: 15px; font-weight: 600; margin: 20px 0 6px; color: var(--text); }
+  p { font-size: 15px; color: var(--text-2); margin-bottom: 14px; line-height: 1.7; }
+  ul { padding-left: 20px; margin-bottom: 14px; }
+  ul li { font-size: 15px; color: var(--text-2); margin-bottom: 7px; line-height: 1.6; }
+  a { color: var(--accent); }
+
+  /* Data table */
+  .data-table { width: 100%; border-collapse: collapse; margin: 16px 0 20px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); }
+  .data-table th { background: var(--bg); font-size: 12px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; color: var(--text-3); padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border); }
+  .data-table td { font-size: 14px; color: var(--text-2); padding: 11px 14px; border-bottom: 1px solid var(--border); background: var(--surface); vertical-align: top; }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table td:first-child { font-weight: 500; color: var(--text); white-space: nowrap; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; }
+  .badge.yes { background: var(--accent-lt); color: var(--accent); border: 1px solid var(--accent-mid); }
+  .badge.no { background: var(--bg); color: var(--text-3); border: 1px solid var(--border); }
+
+  /* Footer */
+  footer {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    text-align: center;
+    padding: 28px 24px;
+    font-size: 13px; color: var(--text-3);
+  }
   footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+  .footer-links { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px 20px; margin-top: 8px; }
 </style>
 </head>
 <body>
@@ -44,88 +125,205 @@
     <div class="logo-icon"><img src="icon.png" alt="PawManager"></div>
     <span>PawManager</span>
   </a>
-  <nav>
-    <a href="terms.html">Terms of Use →</a>
-  </nav>
+  <a class="nav-link" href="terms.html">Terms of Use →</a>
 </header>
 
 <div class="page">
-  <h1>Privacy Policy</h1>
-  <p class="meta">Effective date: May 1, 2026 &nbsp;·&nbsp; Last updated: May 1, 2026 &nbsp;·&nbsp; Contact: <a href="mailto:savchik.vl@gmail.com">savchik.vl@gmail.com</a></p>
 
-  <div class="callout">PawManager is a business management tool for independent dog walkers. We are committed to protecting your privacy. We do not sell your data, run ads, or share your information with third parties for marketing purposes.</div>
+  <div class="page-header">
+    <h1>Privacy Policy</h1>
+    <div class="meta">
+      <span>📅 Effective: May 1, 2026</span>
+      <span>🔄 Last updated: May 1, 2026</span>
+      <span>✉️ <a href="mailto:savchik.vl@gmail.com">savchik.vl@gmail.com</a></span>
+    </div>
 
-  <h2>1. Who We Are</h2>
-  <p>PawManager ("we," "us," or "our") is a mobile application developed and operated as an independent product. If you have any questions about this Privacy Policy, you can contact us at <a href="mailto:savchik.vl@gmail.com">savchik.vl@gmail.com</a>.</p>
+    <div class="callout">
+      PawManager is a business management tool for independent dog walkers. We are committed to protecting your privacy. We do not sell your data, run ads, or share your information with third parties for marketing purposes.
+    </div>
 
-  <h2>2. Information We Collect</h2>
+    <div class="toc">
+      <div class="toc-title">Contents</div>
+      <div class="toc-grid">
+        <a href="#s1">1. Who We Are</a>
+        <a href="#s2">2. Information We Collect</a>
+        <a href="#s3">3. How We Use Your Information</a>
+        <a href="#s4">4. Data Storage & Security</a>
+        <a href="#s5">5. Push Notifications</a>
+        <a href="#s6">6. Third-Party Services</a>
+        <a href="#s7">7. Client Data You Enter</a>
+        <a href="#s8">8. App Store Privacy Labels</a>
+        <a href="#s9">9. Children's Privacy</a>
+        <a href="#s10">10. Your Rights</a>
+        <a href="#s11">11. Data Retention</a>
+        <a href="#s12">12. Changes to This Policy</a>
+        <a href="#s13">13. Contact Us</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1 -->
+  <h2 id="s1"><span class="section-num">1</span> Who We Are</h2>
+  <p>PawManager ("we," "us," or "our") is a mobile application for independent dog walkers and small pet care businesses. It is developed and operated as an independent product. If you have any questions about this Privacy Policy, contact us at <a href="mailto:savchik.vl@gmail.com">savchik.vl@gmail.com</a>.</p>
+
+  <!-- 2 -->
+  <h2 id="s2"><span class="section-num">2</span> Information We Collect</h2>
+
   <h3>Information you provide directly</h3>
   <ul>
-    <li><strong>Account information:</strong> your name, email address, and password when you create an account.</li>
-    <li><strong>Business information:</strong> your business name (optional), default walk rate, and app preferences.</li>
-    <li><strong>Client data:</strong> names, phone numbers, addresses, and payment methods of your clients — entered by you for your own business use.</li>
-    <li><strong>Dog profiles:</strong> dog names, breeds, ages, weights, photos, temperament notes, vet contact information, and medical or behavioral notes — entered by you.</li>
-    <li><strong>Walk records:</strong> scheduled and completed walk data including dates, times, durations, and notes.</li>
-    <li><strong>Payment records:</strong> payment amounts, dates, and methods you log within the app.</li>
+    <li><strong>Account information</strong> — your full name, email address, and password when you sign up. Optionally, Sign in with Apple.</li>
+    <li><strong>Business information</strong> — your business name (optional, used in PDF export headers), default walk rate, and default walk duration.</li>
+    <li><strong>Client data</strong> — names, phone numbers, addresses, default rates, payment methods (Cash / Venmo / Zelle / Check), and access notes (key codes, parking instructions) — entered by you to manage your own clients.</li>
+    <li><strong>Dog profiles</strong> — dog names, breeds, ages, weights, photos, temperament tags (Friendly / Reactive / Nervous / Multi-dog OK / Good on leash), vet name and phone, and medical or behavioral notes — entered by you.</li>
+    <li><strong>Walk records</strong> — scheduled and completed walk data including date, start time, planned and actual duration, walk status, amount, payment status, and post-walk notes.</li>
+    <li><strong>Recurring walk templates</strong> — days of week, start time, duration, start/end dates, and active status for recurring series (Pro feature).</li>
+    <li><strong>Payment records</strong> — payment amounts, dates, methods, and optional notes you log within the app.</li>
   </ul>
 
   <h3>Information collected automatically</h3>
   <ul>
-    <li><strong>Device information:</strong> device type and iOS version, collected by Apple and Expo for crash reporting purposes.</li>
-    <li><strong>Push notification tokens:</strong> used solely to deliver walk reminders and app notifications to your device.</li>
+    <li><strong>Push notification tokens</strong> — device tokens generated by Expo Notifications, used solely to deliver local walk reminders and app notifications to your device. No notification content is routed through our servers.</li>
+    <li><strong>Device information</strong> — device type and iOS version, collected by Apple and Expo for crash diagnostics only.</li>
   </ul>
-  <p>We do not use any analytics SDKs or third-party tracking tools in the app. We do not collect location data.</p>
 
-  <h2>3. How We Use Your Information</h2>
+  <div class="callout">
+    We do not use any analytics SDKs, advertising SDKs, or third-party tracking tools in the app. We do not collect your location. All notifications are scheduled locally on your device — no notification data passes through PawManager servers.
+  </div>
+
+  <!-- 3 -->
+  <h2 id="s3"><span class="section-num">3</span> How We Use Your Information</h2>
+  <p>We use the information you provide exclusively to operate the App. Specifically:</p>
   <ul>
-    <li>To operate and deliver the core features of the app — client management, scheduling, and payment tracking.</li>
-    <li>To send you push notifications for walk reminders, overdue payment alerts, and daily summaries (which you can disable in Settings at any time).</li>
-    <li>To manage your account and app preferences.</li>
-    <li>To respond to support requests you send to us by email.</li>
+    <li>To deliver core features — client and dog profile management, walk scheduling, live walk timer, and payment tracking.</li>
+    <li>To generate recurring walk instances automatically from your templates (up to 60 days ahead).</li>
+    <li>To send locally scheduled push notifications — walk reminders, overdue walk alerts, unpaid balance reminders (Pro), daily summaries, and monthly recaps.</li>
+    <li>To generate monthly earnings reports and PDF exports for your tax records (Pro).</li>
+    <li>To manage your subscription status via RevenueCat and Apple In-App Purchase.</li>
+    <li>To respond to support requests you send us by email.</li>
   </ul>
+  <p>We never use your data for advertising, profiling, or any purpose beyond operating the App for you.</p>
 
-  <h2>4. Data Storage and Security</h2>
-  <p>Your data is stored securely in Supabase (hosted on AWS us-east-1). Supabase uses Row Level Security (RLS) to ensure your data is completely isolated from other users — no other PawManager user can access your clients, walks, or payment records.</p>
-  <p>Dog photos are stored in Supabase Storage with private bucket policies. All data is transmitted over HTTPS/TLS.</p>
-  <p>We recommend using a strong, unique password for your account. We cannot recover data if you lose access to your account credentials.</p>
+  <!-- 4 -->
+  <h2 id="s4"><span class="section-num">4</span> Data Storage & Security</h2>
+  <p>All your data is stored in <strong>Supabase</strong> (hosted on AWS us-east-1). Supabase enforces Row Level Security (RLS) policies on every table — your clients, dogs, walks, and payment records are completely isolated from all other PawManager users. No other user can query or access your data.</p>
+  <p>Dog photos are stored in private Supabase Storage buckets with policies that prevent public access. All data in transit is encrypted via HTTPS/TLS.</p>
+  <p>We recommend using a strong, unique password or Sign in with Apple for maximum account security. We cannot recover your data if you lose access to your account credentials.</p>
 
-  <h2>5. Third-Party Services</h2>
-  <p>PawManager uses the following third-party services, each with their own privacy policies:</p>
+  <!-- 5 -->
+  <h2 id="s5"><span class="section-num">5</span> Push Notifications</h2>
+  <p>PawManager schedules all push notifications locally on your device using Expo Notifications. Notification identifiers are stored in your walk records so reminders can be cancelled when a walk is edited or deleted. The following notification types may be sent:</p>
+  <ul>
+    <li><strong>Walk reminders</strong> — fires 15, 30, or 60 minutes before a scheduled walk (configurable in Settings).</li>
+    <li><strong>Overdue walk alerts</strong> — fires 15 minutes after a walk's scheduled start if it hasn't been started.</li>
+    <li><strong>Unpaid balance reminders</strong> — fires after 7 days of outstanding payment — Pro feature, can be toggled off in Settings.</li>
+    <li><strong>Daily summary</strong> — fires at 8pm with a recap of walks done and earnings — optional, off by default.</li>
+    <li><strong>Monthly recap</strong> — fires on the 1st of each month with your previous month's summary.</li>
+  </ul>
+  <p>You can disable all notifications at any time in iOS Settings → Notifications → PawManager, or individually within the App's Settings screen.</p>
+
+  <!-- 6 -->
+  <h2 id="s6"><span class="section-num">6</span> Third-Party Services</h2>
+  <p>PawManager integrates with the following services. Each handles data under their own privacy policies:</p>
   <ul>
     <li><strong>Supabase</strong> — database, authentication, and file storage. <a href="https://supabase.com/privacy" target="_blank">supabase.com/privacy</a></li>
-    <li><strong>Apple</strong> — App Store and Apple Sign In. <a href="https://www.apple.com/legal/privacy/" target="_blank">apple.com/legal/privacy</a></li>
-    <li><strong>Expo / EAS</strong> — app build and push notification infrastructure. <a href="https://expo.dev/privacy" target="_blank">expo.dev/privacy</a></li>
+    <li><strong>Apple</strong> — App Store distribution, Sign in with Apple, and In-App Purchase billing. <a href="https://www.apple.com/legal/privacy/" target="_blank">apple.com/legal/privacy</a></li>
+    <li><strong>RevenueCat</strong> — subscription management and entitlement verification. <a href="https://www.revenuecat.com/privacy" target="_blank">revenuecat.com/privacy</a></li>
+    <li><strong>Expo / EAS</strong> — app runtime and push notification token infrastructure. <a href="https://expo.dev/privacy" target="_blank">expo.dev/privacy</a></li>
   </ul>
-  <p>We do not share your personal data with any other third parties.</p>
+  <p>We do not share your personal data with any other third parties. We do not sell data to data brokers.</p>
 
-  <h2>6. Client Data You Enter</h2>
-  <p>You may enter personal information about your clients (names, addresses, phone numbers) into PawManager to manage your business. This data belongs to you. We process it only on your behalf to deliver the app's features. You are responsible for ensuring you have appropriate consent from your clients to store their information in a third-party app.</p>
+  <!-- 7 -->
+  <h2 id="s7"><span class="section-num">7</span> Client Data You Enter</h2>
+  <p>You may enter personal information about your clients — names, phone numbers, home addresses, and payment methods — into PawManager to manage your business. This data belongs to you. We process it only on your behalf to deliver the App's features.</p>
+  <p>You are responsible for ensuring you have appropriate consent from your clients to store their personal information in a third-party cloud application, in accordance with any applicable privacy laws in your jurisdiction.</p>
 
-  <h2>7. Children's Privacy</h2>
+  <!-- 8 -->
+  <h2 id="s8"><span class="section-num">8</span> App Store Privacy Labels</h2>
+  <p>The following summarizes the data types declared in our App Store privacy nutrition label:</p>
+  <table class="data-table">
+    <thead>
+      <tr><th>Data Type</th><th>Purpose</th><th>Linked to Identity</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Name & email</td>
+        <td>Account creation and authentication</td>
+        <td><span class="badge yes">Yes</span></td>
+      </tr>
+      <tr>
+        <td>Client contact info (name, phone, address)</td>
+        <td>User-entered business data — stored on your behalf</td>
+        <td><span class="badge yes">Yes</span></td>
+      </tr>
+      <tr>
+        <td>Dog photos</td>
+        <td>Displayed on walk and client screens</td>
+        <td><span class="badge yes">Yes</span></td>
+      </tr>
+      <tr>
+        <td>Walk & payment records</td>
+        <td>Core app functionality</td>
+        <td><span class="badge yes">Yes</span></td>
+      </tr>
+      <tr>
+        <td>Usage data / analytics</td>
+        <td>Not collected — no analytics SDK in app</td>
+        <td><span class="badge no">No</span></td>
+      </tr>
+      <tr>
+        <td>Location data</td>
+        <td>Not collected</td>
+        <td><span class="badge no">No</span></td>
+      </tr>
+      <tr>
+        <td>Payment / billing info</td>
+        <td>Handled by Apple IAP and RevenueCat only — not stored by PawManager</td>
+        <td><span class="badge no">No</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 9 -->
+  <h2 id="s9"><span class="section-num">9</span> Children's Privacy</h2>
   <p>PawManager is intended for use by adults (18+) running a professional dog walking business. We do not knowingly collect personal information from children under 13. If you believe a child has created an account, please contact us at <a href="mailto:savchik.vl@gmail.com">savchik.vl@gmail.com</a> and we will delete the account promptly.</p>
 
-  <h2>8. Your Rights</h2>
+  <!-- 10 -->
+  <h2 id="s10"><span class="section-num">10</span> Your Rights</h2>
+  <p>You have the following rights over your data:</p>
   <ul>
-    <li>Access the personal data we hold about you.</li>
-    <li>Correct inaccurate data directly within the app's Settings.</li>
-    <li>Delete your account and all associated data by emailing <a href="mailto:savchik.vl@gmail.com">savchik.vl@gmail.com</a>.</li>
-    <li>Export your data directly from the app.</li>
-    <li>Opt out of push notifications at any time in iOS Settings or within the app.</li>
+    <li><strong>Access</strong> — request a copy of the personal data we hold about your account.</li>
+    <li><strong>Correction</strong> — update your name, email, business name, and preferences directly within the App's Settings screen.</li>
+    <li><strong>Deletion</strong> — request full account deletion by emailing <a href="mailto:savchik.vl@gmail.com">savchik.vl@gmail.com</a>. All client profiles, dog profiles, walk records, payment records, and account data will be permanently deleted within 30 days.</li>
+    <li><strong>Export</strong> — export your earnings data as a PDF from the Reports screen (Pro feature).</li>
+    <li><strong>Notification opt-out</strong> — disable any or all push notification types in iOS Settings or within the App's Settings screen at any time.</li>
+    <li><strong>Subscription cancellation</strong> — cancel your Pro subscription at any time via iOS Settings → Apple ID → Subscriptions.</li>
   </ul>
-  <p>Upon account deletion request, we will permanently delete your account, all client profiles, dog profiles, walk records, and payment records within 30 days.</p>
 
-  <h2>9. Data Retention</h2>
-  <p>We retain your data for as long as your account is active. If you delete your account, all data is permanently deleted within 30 days. Subscription transaction records may be retained by Apple and RevenueCat per their own retention policies.</p>
+  <!-- 11 -->
+  <h2 id="s11"><span class="section-num">11</span> Data Retention</h2>
+  <p>We retain your data for as long as your account is active. If you delete your account, all data is permanently removed from Supabase within 30 days.</p>
+  <p>Subscription transaction records may be retained by Apple and RevenueCat in accordance with their own data retention policies. We do not control or have access to Apple's billing records.</p>
 
-  <h2>10. Changes to This Policy</h2>
-  <p>We may update this Privacy Policy from time to time. When we do, we will update the "Last updated" date at the top of this page. For significant changes, we will notify you via a push notification or in-app banner. Continued use of the app after changes constitutes acceptance of the updated policy.</p>
+  <!-- 12 -->
+  <h2 id="s12"><span class="section-num">12</span> Changes to This Policy</h2>
+  <p>We may update this Privacy Policy from time to time. When we do, we will update the "Last updated" date at the top of this page. For significant changes — such as new data collection practices or new third-party integrations — we will notify you via a push notification or in-app banner. Continued use of the App after changes take effect constitutes your acceptance of the updated policy.</p>
 
-  <h2>11. Contact Us</h2>
-  <p>If you have any questions, concerns, or requests regarding this Privacy Policy, please contact us at: <a href="mailto:savchik.vl@gmail.com">savchik.vl@gmail.com</a></p>
+  <!-- 13 -->
+  <h2 id="s13"><span class="section-num">13</span> Contact Us</h2>
+  <p>If you have any questions, concerns, or data requests regarding this Privacy Policy, please contact us:</p>
+  <p><strong>Email:</strong> <a href="mailto:savchik.vl@gmail.com">savchik.vl@gmail.com</a><br>
+  <strong>Response time:</strong> We aim to respond within 2 business days.</p>
+
 </div>
 
 <footer>
-  © 2026 PawManager. All rights reserved. &nbsp;·&nbsp; <a href="privacy.html">Privacy Policy</a> &nbsp;·&nbsp; <a href="terms.html">Terms of Use</a> &nbsp;·&nbsp; <a href="mailto:savchik.vl@gmail.com">savchik.vl@gmail.com</a>
+  © 2026 PawManager. All rights reserved.
+  <div class="footer-links">
+    <a href="privacy.html">Privacy Policy</a>
+    <a href="terms.html">Terms of Use</a>
+    <a href="mailto:savchik.vl@gmail.com">savchik.vl@gmail.com</a>
+  </div>
 </footer>
+
 </body>
 </html>
